@@ -1,27 +1,28 @@
 package io;
 
-import java.io.BufferedReader;
-import java.io.FileWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import model.BookStatistics;
+import model.BookStatisticsItem;
+
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.util.List;
 
 /**
  * Приклад запису вхідного потоку з консолі в файл.
  */
 public class WriterExample {
-  public static void main(String[] args) throws IOException {
-    // Створюємо буферізований символьний вхідний потік
-    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    // Використовуємо клас PrintWriter для виведення
-    try (PrintWriter out = new PrintWriter(new FileWriter("out.txt"))) {
-      while (true) {
-        String s = in.readLine();
-        if ("stop".equals(s))  // за словом stop зупинка
-          break;
-        out.println(s);
-      }
-    }
 
+  private static final XmlMapper xmlMapper = new XmlMapper();
+  {xmlMapper.enable(
+      SerializationFeature.INDENT_OUTPUT);
+  }
+  public static void main(String[] args) throws IOException {
+    BookStatisticsItem bookStatisticsItem1 = new BookStatisticsItem("1", "1c");
+    BookStatisticsItem bookStatisticsItem2 = new BookStatisticsItem("2", "2c");
+    BookStatistics bookStatistics = new BookStatistics(List.of(bookStatisticsItem1, bookStatisticsItem2));
+
+    xmlMapper.writeValue(new FileOutputStream("test.xml"), bookStatistics);
   }
 }
